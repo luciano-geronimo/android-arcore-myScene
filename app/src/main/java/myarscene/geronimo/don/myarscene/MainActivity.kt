@@ -8,19 +8,31 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.google.ar.sceneform.ArSceneView
+import com.google.ar.sceneform.Scene
+import com.google.ar.sceneform.ux.ArFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MyARScene"//My logcat tag
     private val MIN_GL_VERSION = 3.0//Minimal GL version for sceneform to work.
-
+    private lateinit var  sceneController :SceneController //My scene controller, implementing the interfaces
+    private lateinit var sceneView : ArSceneView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(!checkSupport(this)){
             Log.e(TAG, "DEVICE NOT SUPPORTED")
             return
         }
-
+        //Sets the content
         setContentView(R.layout.activity_main)
+        //Grabs the sceneView. It will be used in many places.
+        sceneView = (arFragment as ArFragment).arSceneView
+        //My controller has to listen to the events.
+        sceneController = SceneController(sceneView, this)
+        sceneView.scene.addOnUpdateListener(sceneController)
+        sceneView.scene.addOnPeekTouchListener(sceneController)
+        sceneView.scene.addOnPeekTouchListener(sceneController)
     }
     /**
      * Tem que ter a sdk >= 24 e tem que ter opengl 3.0 (pelo menos).
